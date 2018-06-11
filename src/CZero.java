@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -12,56 +11,125 @@ public class CZero {
 	private ArrayList<String> rules;
 	private ArrayList<String[]> result;
 	
-	private ArrayList<Character> nonTerminal;
-	private ArrayList<Character> terminal;
-	private ArrayList<String[]> productionRule;
+	private ArrayList<ProductionRule> productionRules;
+	private ArrayList<Closure> closure;
+	private ArrayList<Iteration> iteration;
 	
 	/* Constructor */
 	public CZero () {
 		this.rules = new ArrayList<String>();
 		this.result = new ArrayList<String[]>();
 		
-		this.nonTerminal = new ArrayList<Character>();
-		this.terminal = new ArrayList<Character>();
-		this.productionRule = new ArrayList<String[]>();
+		this.productionRules = new ArrayList<ProductionRule>();
+		this.closure = new ArrayList<Closure>();
+		this.iteration = new ArrayList<Iteration>();
 	}
 	
+	/* Public Function */
 	public void implementCzero() {
-		this.group();
+		this.makeProductionRule();
+		this.start();
+		
+		
+		
 	}
 	
-	private void group() {
+	
+	/* Private Function */
+	private void makeProductionRule() {
 		// Make Starting Rule
 		rules.add(0, "S>" + rules.get(0).substring(0, 1));
 		
-		// divide production rule
-		for (int i = 0; i < rules.size(); i++) {
-			String[] rule = rules.get(i).split(">");
-			productionRule.add(rule);
-			
-			// Store non-terminals
-			if (!nonTerminal.contains(rule[0].charAt(0)))
-				nonTerminal.add(rule[0].charAt(0));
+		// Store production rules
+		for (int i = 0; i < rules.size(); i++)		
+			productionRules.add(new ProductionRule(rules.get(i), i));
+	}
+	
+	
+	private void start() {
+		LR0Item origin = new LR0Item(productionRules.get(0), 0);
+		ArrayList<LR0Item> closureItems = this.getClosureItems(origin);
+		this.resetVisited();
+		
+		// make closure and iteration
+		closure.add(new Closure(origin, closureItems));
+		iteration.add(new Iteration(closure.get(0), 0));
+		
+		// TODO GOTO
+		for (int i = 0; i < closureItems.size(); i++) {
+			Symbol markSymbol = closureItems.get(i).getMarkSymbol();
+			if (markSymbol.isTerminal()) {
+				
+			}
 			
 		}
 		
-		// Store terminals
-		for (int i = 0; i < productionRule.size(); i++) {
-			String s = productionRule.get(i)[1];
-			for (int j = 0; j < s.length(); j++) {
-				if (!nonTerminal.contains(s.charAt(j)))
-					terminal.add(s.charAt(j));
+	}
+	
+	// maybe not use this function
+	/**
+	 * Get Closure of origin
+	 * @param origin
+	 * @return Closure
+	 */
+	private Closure getClosure(LR0Item origin) {
+		
+		ArrayList<LR0Item> items = new ArrayList<LR0Item>();
+		
+		// Add all closures of origin to items
+		items.addAll(this.getClosureItems(origin));
+		
+		// Print
+		for (int i = 0; i < items.size(); i++) {
+			System.out.println(i + "\t" + items.get(i).getStringItem());
+		}
+		System.out.println();
+		
+		return new Closure(origin, items);
+	}
+	
+	
+	/**
+	 * Get all closure items of item origin
+	 * @param origin
+	 * @return ArrayList<LR0Item> items
+	 */
+	private ArrayList<LR0Item> getClosureItems(LR0Item origin) {
+		Symbol markSymbol = origin.getMarkSymbol();
+		ArrayList<LR0Item> items = new ArrayList<LR0Item>();
+		
+		items.add(origin);					// Add origin
+		
+		if (!markSymbol.isTerminal()) {		// If mark symbol is non-terminal
+			char symbol = markSymbol.getSymbol();
+			
+			// Add all productions that starts with markSymbol
+			for (int i = 0; i < productionRules.size(); i++) {
+				if (!productionRules.get(i).isVisited()) {										// If this rule has not been visited
+					if (productionRules.get(i).getFrom().getSymbol() == symbol) {				// markSymbol == from
+						productionRules.get(i).checkVisited();									// Check as Visited
+						items.addAll(getClosureItems(new LR0Item(productionRules.get(i), 0)));	// Add all closures of this production rule
+					}
+				}
 			}
 		}
+		else if (markSymbol.getSymbol() == '.') {
+			origin.setEnd();
+		}
+		
+		return items;
 	}
 	
-	private void goIteration() {
+	private void getGOTO() {
 		
 	}
 	
 	
-	
-	
+	private void resetVisited() {
+		// Reset visited
+		for (int i = 0; i < productionRules.size(); i++)
+			productionRules.get(i).resetVisited();
+	}
 	
 	/* Read and Write File */
 	public void readFile(String inputFileName) {
@@ -71,6 +139,7 @@ public class CZero {
 		System.out.println("Read File");
 		try {
 			fr = new FileReader(inputFileName);
+			
 			br = new BufferedReader(fr);
 			
 			String s = new String();
@@ -139,7 +208,7 @@ public class CZero {
 		}
 	}
 
-	
+	/* Main Function */
 	public static void main(String[] args) {
 		
 		String inputFileName = new String("rule.txt");
