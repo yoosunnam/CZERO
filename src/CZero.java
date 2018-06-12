@@ -12,7 +12,6 @@ public class CZero {
 	private ArrayList<String[]> result;
 	
 	private ArrayList<ProductionRule> productionRules;
-	private ArrayList<Closure> closure;
 	private ArrayList<Iteration> iteration;
 	
 	/* Constructor */
@@ -21,15 +20,12 @@ public class CZero {
 		this.result = new ArrayList<String[]>();
 		
 		this.productionRules = new ArrayList<ProductionRule>();
-		this.closure = new ArrayList<Closure>();
 		this.iteration = new ArrayList<Iteration>();
 	}
 	
 	/* Public Function */
 	public void implementCzero() {
 		this.makeProductionRule();
-		this.start();
-		
 		
 		
 	}
@@ -43,93 +39,14 @@ public class CZero {
 		// Store production rules
 		for (int i = 0; i < rules.size(); i++)		
 			productionRules.add(new ProductionRule(rules.get(i), i));
-	}
-	
-	
-	private void start() {
-		LR0Item origin = new LR0Item(productionRules.get(0), 0);
-		ArrayList<LR0Item> closureItems = this.getClosureItems(origin);
-		this.resetVisited();
 		
-		// make closure and iteration
-		closure.add(new Closure(origin, closureItems));
-		iteration.add(new Iteration(closure.get(0), 0));
-		
-		// TODO GOTO
-		for (int i = 0; i < closureItems.size(); i++) {
-			Symbol markSymbol = closureItems.get(i).getMarkSymbol();
-			if (markSymbol.isTerminal()) {
-				
-			}
-			
+		for(ProductionRule pr : productionRules) {
+			System.out.println(pr.getFrom().getSymbol());
 		}
-		
-	}
-	
-	// maybe not use this function
-	/**
-	 * Get Closure of origin
-	 * @param origin
-	 * @return Closure
-	 */
-	private Closure getClosure(LR0Item origin) {
-		
-		ArrayList<LR0Item> items = new ArrayList<LR0Item>();
-		
-		// Add all closures of origin to items
-		items.addAll(this.getClosureItems(origin));
-		
-		// Print
-		for (int i = 0; i < items.size(); i++) {
-			System.out.println(i + "\t" + items.get(i).getStringItem());
-		}
-		System.out.println();
-		
-		return new Closure(origin, items);
 	}
 	
 	
-	/**
-	 * Get all closure items of item origin
-	 * @param origin
-	 * @return ArrayList<LR0Item> items
-	 */
-	private ArrayList<LR0Item> getClosureItems(LR0Item origin) {
-		Symbol markSymbol = origin.getMarkSymbol();
-		ArrayList<LR0Item> items = new ArrayList<LR0Item>();
-		
-		items.add(origin);					// Add origin
-		
-		if (!markSymbol.isTerminal()) {		// If mark symbol is non-terminal
-			char symbol = markSymbol.getSymbol();
-			
-			// Add all productions that starts with markSymbol
-			for (int i = 0; i < productionRules.size(); i++) {
-				if (!productionRules.get(i).isVisited()) {										// If this rule has not been visited
-					if (productionRules.get(i).getFrom().getSymbol() == symbol) {				// markSymbol == from
-						productionRules.get(i).checkVisited();									// Check as Visited
-						items.addAll(getClosureItems(new LR0Item(productionRules.get(i), 0)));	// Add all closures of this production rule
-					}
-				}
-			}
-		}
-		else if (markSymbol.getSymbol() == '.') {
-			origin.setEnd();
-		}
-		
-		return items;
-	}
 	
-	private void getGOTO() {
-		
-	}
-	
-	
-	private void resetVisited() {
-		// Reset visited
-		for (int i = 0; i < productionRules.size(); i++)
-			productionRules.get(i).resetVisited();
-	}
 	
 	/* Read and Write File */
 	public void readFile(String inputFileName) {

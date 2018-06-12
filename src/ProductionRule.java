@@ -7,8 +7,6 @@ public class ProductionRule {
 	private Symbol from;
 	private ArrayList<Symbol> to;
 	
-	private int id;
-	private boolean visited;
 	
 	/* Constructor */
 	public ProductionRule() {
@@ -16,8 +14,6 @@ public class ProductionRule {
 	
 	public ProductionRule(String rule, int id) {
 		this.rule = rule;
-		this.id = id;
-		this.visited = false;
 		
 		this.parseRule();
 	}
@@ -34,15 +30,6 @@ public class ProductionRule {
 	}
 	
 	
-	/* Setter */
-	public void checkVisited() {
-		this.visited = true;
-	}
-	
-	public void resetVisited() {
-		this.visited = false;
-	}
-	
 	
 	/* Getter */
 	public Symbol getFrom() {
@@ -51,14 +38,6 @@ public class ProductionRule {
 	
 	public ArrayList<Symbol> getTo() {
 		return this.to;
-	}
-	
-	public int getID() {
-		return id;
-	}
-	
-	public boolean isVisited() {
-		return this.visited;
 	}
 	
 	public String getStringRule() {

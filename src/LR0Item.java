@@ -4,10 +4,8 @@ public class LR0Item {
 	
 	private Symbol from;
 	private ArrayList<Symbol> to;
-	private int id;
 	
 	private int markIndex;
-	private boolean end;
 	
 	/* Constructor */
 	public LR0Item() {
@@ -16,17 +14,13 @@ public class LR0Item {
 	public LR0Item(ProductionRule pr, int index) {
 		this.from = pr.getFrom();
 		this.to = pr.getTo();
-		this.id = pr.getID();
 		this.markIndex = index;
-		this.end = false;
 	}
 	
 	public LR0Item(Symbol from, ArrayList<Symbol> to, int id, int index) {
 		this.from = from;
 		this.to = to;
-		this.id = id;
 		this.markIndex = index;
-		this.end = false;
 	}
 	
 	
@@ -61,11 +55,6 @@ public class LR0Item {
 		return s;
 	}
 	
-	/* Setter */
-	public void setEnd() {
-		this.end = true;
-	}
-	
 	/* Getter */
 	public Symbol getFrom() {
 		return this.from;
@@ -73,14 +62,6 @@ public class LR0Item {
 	
 	public ArrayList<Symbol> getTo() {
 		return this.to;
-	}
-	
-	public int getID() {
-		return id;
-	}
-	
-	public boolean isEnd() {
-		return end;
 	}
 	
 	
