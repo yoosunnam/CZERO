@@ -6,6 +6,7 @@ public class LRItem {
 	private ArrayList<Symbol> to;
 	
 	private int markIndex;
+	private boolean end;
 	
 	/* Constructor */
 	public LRItem() {
@@ -15,12 +16,7 @@ public class LRItem {
 		this.from = pr.getFrom();
 		this.to = pr.getTo();
 		this.markIndex = index;
-	}
-	
-	public LRItem(Symbol from, ArrayList<Symbol> to, int id, int index) {
-		this.from = from;
-		this.to = to;
-		this.markIndex = index;
+		this.end = false;
 	}
 	
 	
@@ -31,7 +27,7 @@ public class LRItem {
 	 * 			but if markSymbol is at the end, return Symbol that consist of '.'
 	 */
 	public Symbol getMarkSymbol() {
-		if (markIndex >= to.size())
+		if (end)
 			return new Symbol('.');
 		else
 			return to.get(markIndex);
@@ -59,7 +55,11 @@ public class LRItem {
 	}
 	
 	public void addMarkIndex() {
-		this.markIndex++;
+		if (!end) 
+			this.markIndex++;
+		
+		if (markIndex >= to.size())
+			this.end = true;
 	}
 	
 	/* Getter */
@@ -77,6 +77,10 @@ public class LRItem {
 	
 	public char getToSymbolofIdx(int i) {
 		return this.to.get(i).getSymbol();
+	}
+	
+	public boolean isEnd() {
+		return this.end;
 	}
 	
 	
