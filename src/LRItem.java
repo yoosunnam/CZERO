@@ -40,6 +40,7 @@ public class LRItem {
 	public String getStringItem() {
 		String s = new String();
 		
+		s += "[";
 		s += from.getSymbol();
 		s += "->";
 		for (int i = 0; i < to.size(); i++) {
@@ -50,6 +51,7 @@ public class LRItem {
 		
 		if (markIndex >= to.size())
 			s += ".";
+		s += "]";
 		
 		return s;
 	}

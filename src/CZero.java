@@ -29,14 +29,13 @@ public class CZero {
 		this.productionRules = new ArrayList<ProductionRule>();
 		this.prMap = new HashMap<Character, ArrayList<ProductionRule>>();
 
-		this.iteration = null;
+		this.iteration = new ArrayList<Iteration>();
 	}
 
 	/* Public Function */
 	public void implementCzero() {
 		this.makeProductionRule();
 		this.start();
-
 	}
 
 	/* Private Function */
@@ -63,21 +62,27 @@ public class CZero {
 
 	private void start() {
 		LRItem start = new LRItem(productionRules.get(0), 0);
-
-		ArrayList<LRItem> items = new ArrayList<LRItem>();
-		items = getClosureSet(start);
-
-		// Print all closures
-		for (LRItem item : items)
-			System.out.println(item.getStringItem());
 		
-		doGOTO(items);
-//		int i = 0;
-//		do {
-//			System.out.println("\nI" + i);
-//			doGOTO(items);
-//			i++;
-//		} while(i < iteration.size());
+		ArrayList<LRItem> closures = new ArrayList<LRItem>();
+		closures = getClosureSet(start);
+		
+		iteration.add(new Iteration(closures));
+		
+		int i = 0;
+		do {
+			doGOTO(iteration.get(i).getClosure());
+			i++;
+		} while(i < iteration.size());
+		
+		// Print
+		i = 0;
+		for (Iteration it : iteration) {
+			ArrayList<String> sl = it.getClosureString();
+			System.out.println("\n\nI" + i++);
+			for (String s : sl)
+				System.out.print(s + " ");
+		}
+		System.out.println();
 	}
 
 	private void doGOTO(ArrayList<LRItem> origins) {
@@ -85,23 +90,23 @@ public class CZero {
 
 		// Make same Mark Symbol as a set
 		for (LRItem item : origins) {
-			if (!item.isEnd()) {
-				char startSymbol = item.getMarkSymbol().getSymbol();
+			if (!item.isEnd()) {	// If . is not at the end
+				char startSymbol = item.getMarkSymbol().getSymbol();	// get mark symbol
 
 				ArrayList<LRItem> gotoItems = itemMap.get(startSymbol);
 				if (gotoItems == null)
 					gotoItems = new ArrayList<LRItem>();
 
-				item.addMarkIndex(); // add mark index 1
+				item.addMarkIndex();	// add mark index 1
 				gotoItems.add(item);
-				itemMap.put(startSymbol, gotoItems);
+				itemMap.put(startSymbol, gotoItems);	// add key & arrayList
 			}
 		}
-
+		
 		Set<Character> keySet = itemMap.keySet();
 		Iterator<Character> iter = keySet.iterator();
 
-		// Iterate all markSymbols
+		// Iterate all mark symbols
 		while (iter.hasNext()) {
 			Character key = (Character) iter.next();
 			getClosure(itemMap.get(key), key);	// Get closure for certain markSymbol
@@ -111,51 +116,33 @@ public class CZero {
 
 	private void getClosure(ArrayList<LRItem> origins, char markSymbol) {
 		ArrayList<LRItem> items = new ArrayList<LRItem>();
-
+		ArrayList<String> stringItem = new ArrayList<String>();
+		
+		// Get all the closures of origins
 		for (LRItem item : origins)
 			items.addAll(getClosureSet(item));
-
-		System.out.println("\n<<Enterd getClosure>> : " + markSymbol);
+		
 		for (LRItem item : items) {
-			System.out.println(item.getStringItem());
+			stringItem.add(item.getStringItem());
 		}
-
-		// Iteration에 들어갈 수 있는 지 체크
-		if (iteration == null) {
-			this.iteration = new ArrayList<Iteration>();
-			this.iteration.add(new Iteration(items));
+		
+		// Check if there is same Iteration element
+		boolean isDiff = true;
+		for (Iteration it : iteration) {
+			ArrayList<String> closures = it.getClosureString();
+			
+			if (closures.size() == items.size()) {
+				if (isEqual(stringItem, closures)) {
+					isDiff = false;
+					break;
+				}
+			}
 		}
-//		else {
-//			int sameThing = 0;
-//			boolean isSame = false;
-//
-//			for (Iteration it : iteration) {
-//				sameThing = 0;
-//				ArrayList<LRItem> itItems = it.getClosure();
-//
-//				if (itItems.size() == items.size()) {
-//					for (LRItem itItem : itItems) {
-//						for (LRItem item : items) {
-//							if (itItem.getStringItem().equals(item.getStringItem()))
-//								sameThing++;
-//						}
-//					}
-//				}
-//
-//				if (sameThing == itItems.size()) {
-//					isSame = true;
-//					break;
-//				}
-//			}
-//
-//			if (!isSame) {
-//				this.iteration.add(new Iteration(items));
-////				for (LRItem item : items)
-////					System.out.println(item.getStringItem());
-//			}
-//		}
-//		
-
+		
+		if (isDiff) {
+			iteration.add(new Iteration(items));
+		}
+			
 	}
 
 	/**
@@ -177,16 +164,25 @@ public class CZero {
 			for (ProductionRule pr : sameprs) {
 				LRItem item = new LRItem(pr, 0);
 
-				if (pr.getToSymbolofIdx(0) != ms) // If start of To is not same with ms (to prevent infinite loop)
-					items.addAll(getClosureSet(item)); // Get all closures of item and add all
-				else // If start of To i same with ms
-					items.add(item); // just add to itemList
+				if (pr.getToSymbolofIdx(0) == ms)		// If start of To is same with ms (to prevent infinite loop)
+					items.add(item); 					// just add to itemList
+				else 									// If start of To is not same with ms
+					items.addAll(getClosureSet(item));	// Get all closures of item and add all
 			}
 		}
 
 		return items;
 	}
 
+	private boolean isEqual(ArrayList<String> items, ArrayList<String> saved) {
+		for (int i = 0;  i < items.size(); i++) {
+			if (!items.get(i).equals(saved.get(i)))
+				return false;
+		}
+		return true;
+	}
+	
+	
 	/* Read and Write File */
 	public void readFile(String inputFileName) {
 		FileReader fr = null;
@@ -231,17 +227,22 @@ public class CZero {
 	public void writeFile(String outputFileName) {
 		FileWriter fw = null;
 		BufferedWriter bw = null;
-
+		
+		
+		System.out.println();
+		
 		System.out.println("Write File");
 		try {
 			fw = new FileWriter(outputFileName);
 			bw = new BufferedWriter(fw);
 
-			for (int i = 0; i < result.size(); i++) {
-				bw.write("I" + i);
+			int i = 0;
+			for (Iteration it : iteration) {
+				ArrayList<String> sl = it.getClosureString();
+				bw.write("I" + i++);
 				bw.newLine();
-				for (int j = 0; j < result.get(i).length; j++)
-					bw.write("[" + result.get(i)[j] + "]");
+				for (String s : sl)
+					bw.write(s);
 				bw.newLine();
 			}
 			bw.flush();
