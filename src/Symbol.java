@@ -24,8 +24,8 @@ public class Symbol {
 		return this.symbolChar;
 	}
 	
-	public boolean isTerminal() {
-		return this.terminal;
+	public boolean isNonTerminal() {
+		return !this.terminal;
 	}
 	
 

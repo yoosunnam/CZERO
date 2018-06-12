@@ -1,21 +1,16 @@
+import java.util.ArrayList;
 
 public class Iteration {
 
-	private Closure closure;
-	private int iteration;
+	private ArrayList<LRItem> closures;
 	
-	public Iteration(Closure closure, int i) {
-		this.closure = closure;
-		this.iteration = i;
+	public Iteration(ArrayList<LRItem> closure) {
+		this.closures = closure;
 	}
 	
 	
 	/* Getter */
-	public Closure getClosure() {
-		return closure;
-	}
-	
-	public int getIteration() {
-		return iteration;
+	public ArrayList<LRItem> getClosure() {
+		return closures;
 	}
 }

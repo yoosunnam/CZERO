@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class LR0Item {
+public class LRItem {
 	
 	private Symbol from;
 	private ArrayList<Symbol> to;
@@ -8,16 +8,16 @@ public class LR0Item {
 	private int markIndex;
 	
 	/* Constructor */
-	public LR0Item() {
+	public LRItem() {
 	}
 	
-	public LR0Item(ProductionRule pr, int index) {
+	public LRItem(ProductionRule pr, int index) {
 		this.from = pr.getFrom();
 		this.to = pr.getTo();
 		this.markIndex = index;
 	}
 	
-	public LR0Item(Symbol from, ArrayList<Symbol> to, int id, int index) {
+	public LRItem(Symbol from, ArrayList<Symbol> to, int id, int index) {
 		this.from = from;
 		this.to = to;
 		this.markIndex = index;
@@ -38,7 +38,7 @@ public class LR0Item {
 	}
 	
 	/**
-	 * Get LR0Item in String
+	 * Get LRItem in String
 	 * @return String
 	 */
 	public String getStringItem() {
@@ -52,7 +52,14 @@ public class LR0Item {
 			s += to.get(i).getSymbol();
 		}
 		
+		if (markIndex >= to.size())
+			s += ".";
+		
 		return s;
+	}
+	
+	public void addMarkIndex() {
+		this.markIndex++;
 	}
 	
 	/* Getter */
@@ -60,8 +67,16 @@ public class LR0Item {
 		return this.from;
 	}
 	
+	public char getFromSymbol() {
+		return this.getFromSymbol();
+	}
+	
 	public ArrayList<Symbol> getTo() {
 		return this.to;
+	}
+	
+	public char getToSymbolofIdx(int i) {
+		return this.to.get(i).getSymbol();
 	}
 	
 	

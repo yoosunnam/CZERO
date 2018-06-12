@@ -36,8 +36,16 @@ public class ProductionRule {
 		return this.from;
 	}
 	
+	public char getFromSymbol() {
+		return this.from.getSymbol();
+	}
+	
 	public ArrayList<Symbol> getTo() {
 		return this.to;
+	}
+	
+	public char getToSymbolofIdx(int i) {
+		return this.to.get(i).getSymbol();
 	}
 	
 	public String getStringRule() {
