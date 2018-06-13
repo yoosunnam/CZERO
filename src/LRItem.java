@@ -12,10 +12,10 @@ public class LRItem {
 	public LRItem() {
 	}
 	
-	public LRItem(ProductionRule pr, int index) {
+	public LRItem(ProductionRule pr) {
 		this.from = pr.getFrom();
 		this.to = pr.getTo();
-		this.markIndex = index;
+		this.markIndex = 0;
 		this.end = false;
 	}
 	
@@ -30,14 +30,14 @@ public class LRItem {
 		if (end)
 			return new Symbol('.');
 		else
-			return to.get(markIndex);
+			return this.to.get(markIndex);
 	}
 	
 	/**
 	 * Get LRItem in String (form to write in file)
 	 * @return String
 	 */
-	public String getIteminString() {
+	public String getItemInString() {
 		String s = new String();
 		
 		s += "[";

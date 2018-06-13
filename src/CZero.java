@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class CZero {
-	private ArrayList<String> rules;		// Format when read from file
+	private ArrayList<String> rules;								// Format when read from file
 
 	private ArrayList<ProductionRule> productionRules;				// Format to use in this program
 	private HashMap<Character, ArrayList<ProductionRule>> prMap;	// Stores Production Rules that have same "from" Symbol
@@ -20,6 +20,7 @@ public class CZero {
 
 	private ArrayList<Iteration> iteration;							// All Iteration is stored
 
+	
 	/* Constructor */
 	public CZero() {
 		this.rules = new ArrayList<String>();
@@ -44,7 +45,7 @@ public class CZero {
 
 		// Make same starting symbol as a set
 		for (ProductionRule pr : productionRules) {
-			char from = pr.getFromSymbol();
+			char from = pr.getFrom().getSymbol();
 
 			ArrayList<ProductionRule> samepr = prMap.get(from);
 			if (samepr == null)
@@ -59,12 +60,12 @@ public class CZero {
 	 * Implement C0
 	 */
 	public void implementCzero() {
-		LRItem start = new LRItem(productionRules.get(0), 0);	// Get start LRItem (First ProductionRule)
+		LRItem start = new LRItem(productionRules.get(0));	// Get start LRItem (First ProductionRule)
 		
 		ArrayList<LRItem> closures = new ArrayList<LRItem>();
-		closures = getClosureSet(start);		// Get all the closures of start LRItem
+		closures = this.getClosureSet(start);		// Get all the closures of start LRItem
 		
-		iteration.add(new Iteration(closures));	// Store closures in first iteration(I0)
+		iteration.add(new Iteration(closures));		// Store closures in first iteration(I0)
 		
 		int i = 0;
 		do {
@@ -87,15 +88,14 @@ public class CZero {
 	
 	/**
 	 * GOTO for one Iteration
-	 * @param origins (ArrayList<LRItem>)
+	 * @param origins (ArrayList<LRItem> is all LR(0) items for one iteration)
 	 */
 	private void doGOTO(ArrayList<LRItem> origins) {
 		itemMap = new LinkedHashMap<Character, ArrayList<LRItem>>();
-
 		// Make same Mark Symbol as a set
 		for (LRItem item : origins) {
 			if (!item.isEnd()) {	// If "." is not at the end
-				char startSymbol = item.getMarkSymbol().getSymbol();	// get mark symbol
+				char startSymbol = item.getMarkSymbol().getSymbol();	// get mark symbol character
 
 				ArrayList<LRItem> gotoItems = itemMap.get(startSymbol);
 				if (gotoItems == null)
@@ -113,7 +113,7 @@ public class CZero {
 		// Iterate all mark symbols
 		while (iter.hasNext()) {
 			Character key = (Character) iter.next();
-			getClosure(itemMap.get(key), key);	// Get closure for certain markSymbol
+			this.getClosure(itemMap.get(key));	// Get closure for certain markSymbol
 		}
 
 	}
@@ -123,19 +123,18 @@ public class CZero {
 	 * And check if obtained closures(items) already exist
 	 * If not exist, add this closures into iteration
 	 * @param origins
-	 * @param markSymbol
 	 */
-	private void getClosure(ArrayList<LRItem> origins, char markSymbol) {
+	private void getClosure(ArrayList<LRItem> origins) {
 		ArrayList<LRItem> items = new ArrayList<LRItem>();
 		ArrayList<String> stringItem = new ArrayList<String>();
 		
 		// Get all the closures of origins
 		for (LRItem item : origins)
-			items.addAll(getClosureSet(item));
+			items.addAll(this.getClosureSet(item));
 		
 		// Make all items into String
 		for (LRItem item : items) {
-			stringItem.add(item.getIteminString());
+			stringItem.add(item.getItemInString());
 		}
 		
 		// Check if there is same Iteration element
@@ -168,17 +167,17 @@ public class CZero {
 
 		items.add(origin); // Add origin Item in List
 
-		if (origin.getMarkSymbol().isNonTerminal()) { // If mark symbol is non-terminal
+		if (origin.getMarkSymbol().isNonTerminal()) { 	// If mark symbol is non-terminal
 
 			ArrayList<ProductionRule> sameprs = prMap.get(ms); // Get all production rules that starts with ms
 
 			for (ProductionRule pr : sameprs) {
-				LRItem item = new LRItem(pr, 0);		// Make production rule into LRItem that mark symbol is first Symbol
+				LRItem item = new LRItem(pr);				// Make production rule into LRItem that mark symbol is first Symbol
 
-				if (pr.getToSymbolofIdx0() == ms)		// If start of To is same with ms (to prevent infinite loop)
-					items.add(item); 					// Add to itemList
-				else 									// If start of To is not same with ms
-					items.addAll(getClosureSet(item));	// Get all closures of item and add all
+				if (pr.getToCharofIdx0() == ms)				// If start of To is same with ms (to prevent infinite loop)
+					items.add(item); 						// Add to itemList
+				else 										// If start of To is not same with ms
+					items.addAll(this.getClosureSet(item));	// Get all closures of item and add all
 			}
 		}
 
@@ -201,7 +200,10 @@ public class CZero {
 	}
 	
 	
-	/* Read File from input file (rule.txt) */
+	/**
+	 * Read File from input file (rule.txt)
+	 * @param inputFileName
+	 */
 	public void readFile(String inputFileName) {
 		FileReader fr = null;
 		BufferedReader br = null;
@@ -244,7 +246,10 @@ public class CZero {
 		}
 	}
 	
-	/* Write File to output file(output.txt)*/
+	/**
+	 * Write File to output file(output.txt)
+	 * @param outputFileName
+	 */
 	public void writeFile(String outputFileName) {
 		FileWriter fw = null;
 		BufferedWriter bw = null;
@@ -287,7 +292,10 @@ public class CZero {
 		}
 	}
 
-	/* Main Function */
+	/**
+	 * Main Function
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		String inputFileName = new String("rule.txt");

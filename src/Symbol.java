@@ -12,10 +12,10 @@ public class Symbol {
 		this.symbolChar = symbolc;
 		
 		//If symbol is Capital, then it is non-terminal
-		if ('A' <= symbolc && symbolc <= 'Z')
-			terminal = false;	// false if non-terminal
+		if ('A' <= this.symbolChar && this.symbolChar <= 'Z')
+			this.terminal = false;	// false if non-terminal
 		else
-			terminal = true;	// true if terminal
+			this.terminal = true;	// true if terminal
 	}
 	
 	

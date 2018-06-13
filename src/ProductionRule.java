@@ -18,7 +18,7 @@ public class ProductionRule {
 		
 		this.to = new ArrayList<Symbol>();
 		for (int i = 0; i < parserule[1].length(); i++)
-			to.add(new Symbol(parserule[1].charAt(i)));
+			this.to.add(new Symbol(parserule[1].charAt(i)));
 	}
 	
 	
@@ -33,13 +33,8 @@ public class ProductionRule {
 		return this.to;
 	}
 	
-	// Get Symbol of from
-	public char getFromSymbol() {
-		return this.from.getSymbol();
-	}
-	
 	// Get Symbol of first Symbol of to
-	public char getToSymbolofIdx0() {
+	public char getToCharofIdx0() {
 		return this.to.get(0).getSymbol();
 	}
 	
