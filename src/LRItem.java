@@ -2,11 +2,11 @@ import java.util.ArrayList;
 
 public class LRItem {
 	
-	private Symbol from;
-	private ArrayList<Symbol> to;
+	private Symbol from;			// Symbol before traInsformation
+	private ArrayList<Symbol> to;	// Set of Symbol after transformation
 	
-	private int markIndex;
-	private boolean end;
+	private int markIndex;			// Index of "." (Index of Mark Symbol)
+	private boolean end;			// If "." is at the end 
 	
 	/* Constructor */
 	public LRItem() {
@@ -34,10 +34,10 @@ public class LRItem {
 	}
 	
 	/**
-	 * Get LRItem in String
+	 * Get LRItem in String (form to write in file)
 	 * @return String
 	 */
-	public String getStringItem() {
+	public String getIteminString() {
 		String s = new String();
 		
 		s += "[";
@@ -56,31 +56,21 @@ public class LRItem {
 		return s;
 	}
 	
+	/**
+	 * Add MarkIndex 1 (Move "." to Next Symbol)
+	 */
 	public void addMarkIndex() {
 		if (!end) 
 			this.markIndex++;
 		
-		if (markIndex >= to.size())
+		if (markIndex >= to.size())		// Check if markIndex is at the end
 			this.end = true;
 	}
 	
-	/* Getter */
-	public Symbol getFrom() {
-		return this.from;
-	}
-	
-	public char getFromSymbol() {
-		return this.getFromSymbol();
-	}
-	
-	public ArrayList<Symbol> getTo() {
-		return this.to;
-	}
-	
-	public char getToSymbolofIdx(int i) {
-		return this.to.get(i).getSymbol();
-	}
-	
+	/**
+	 * Check if MarkSymbol is at the end of item
+	 * @return end
+	 */
 	public boolean isEnd() {
 		return this.end;
 	}

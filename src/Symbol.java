@@ -1,4 +1,3 @@
-
 public class Symbol {
 	
 	private char symbolChar;
@@ -12,10 +11,11 @@ public class Symbol {
 	public Symbol(char symbolc) {
 		this.symbolChar = symbolc;
 		
+		//If symbol is Capital, then it is non-terminal
 		if ('A' <= symbolc && symbolc <= 'Z')
-			terminal = false;
+			terminal = false;	// false if non-terminal
 		else
-			terminal = true;
+			terminal = true;	// true if terminal
 	}
 	
 	

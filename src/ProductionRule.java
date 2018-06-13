@@ -2,24 +2,16 @@ import java.util.ArrayList;
 
 public class ProductionRule {
 	
-	private String rule;
-	
-	private Symbol from;
-	private ArrayList<Symbol> to;
+	private Symbol from;			// Symbol before transformation
+	private ArrayList<Symbol> to;	// String(Set of Symbol) after transformation
 	
 	
 	/* Constructor */
 	public ProductionRule() {
 	}
 	
-	public ProductionRule(String rule, int id) {
-		this.rule = rule;
-		
-		this.parseRule();
-	}
-	
-	/* Private Function */
-	private void parseRule() {
+	public ProductionRule(String rule) {
+		// Parse String rule into from and to
 		String[] parserule = rule.split(">");
 		
 		this.from = new Symbol(parserule[0].charAt(0));
@@ -32,24 +24,23 @@ public class ProductionRule {
 	
 	
 	/* Getter */
+	
 	public Symbol getFrom() {
 		return this.from;
-	}
-	
-	public char getFromSymbol() {
-		return this.from.getSymbol();
 	}
 	
 	public ArrayList<Symbol> getTo() {
 		return this.to;
 	}
 	
-	public char getToSymbolofIdx(int i) {
-		return this.to.get(i).getSymbol();
+	// Get Symbol of from
+	public char getFromSymbol() {
+		return this.from.getSymbol();
 	}
 	
-	public String getStringRule() {
-		return rule;
+	// Get Symbol of first Symbol of to
+	public char getToSymbolofIdx0() {
+		return this.to.get(0).getSymbol();
 	}
 	
 }
